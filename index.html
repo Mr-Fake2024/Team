@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>UBNT Team Manager</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div class="shell">
+<header><div class="logo">📡</div><div><h1>UBNT Team Manager</h1><p>Shared radio credentials · Team workspace</p></div><span id="connection" class="pill">Not connected</span></header>
+<main>
+<section id="setup" class="panel">
+<h2>Connect your team database</h2>
+<p>Enter the Supabase project URL and public anon key. These are safe to use in a browser when Row Level Security is enabled and the SQL setup is applied.</p>
+<label>Supabase project URL<input id="projectUrl" placeholder="https://your-project.supabase.co"></label>
+<label>Supabase anon/public key<textarea id="anonKey" rows="2" placeholder="Paste the anon/public key"></textarea></label>
+<button id="connectBtn">Connect</button><p class="hint">Configuration is saved in this browser only. No radio records are stored here; they live in your shared cloud database.</p>
+</section>
+<section id="auth" class="panel hidden">
+<div class="tabs"><button class="tab active" data-tab="login">Sign in</button><button class="tab" data-tab="signup">Create account</button></div>
+<form id="loginForm"><label>Email<input id="loginEmail" type="email" required autocomplete="username"></label><label>Password<input id="loginPassword" type="password" required autocomplete="current-password"></label><button>Sign in</button></form>
+<form id="signupForm" class="hidden"><label>Email<input id="signupEmail" type="email" required autocomplete="email"></label><label>Password<input id="signupPassword" type="password" minlength="10" required autocomplete="new-password"></label><button>Create account</button><p class="hint">New accounts must be added to the team by an administrator before they can see radio records.</p></form>
+<p id="authMsg" class="message"></p>
+</section>
+<section id="app" class="hidden">
+<div class="toolbar"><div><strong id="who"></strong><div class="hint">Shared team database</div></div><button class="secondary" id="signOut">Sign out</button></div>
+<div class="stats"><div class="panel"><small>RADIOS</small><strong id="total">0</strong></div><div class="panel"><small>DEVICE TYPES</small><strong id="types">0</strong></div><div class="panel"><small>YOUR ROLE</small><strong id="role">—</strong></div></div>
+<section class="panel">
+<div class="section-title"><h2 id="formTitle">Add radio</h2><span class="hint">Shared with authorized team members</span></div>
+<form id="radioForm" class="grid">
+<input type="hidden" id="recordId">
+<label>Radio name *<input id="name" required placeholder="Site A - Main Link"></label>
+<label>Device model<select id="model"><option>NanoStation</option><option>LiteBeam</option><option>PowerBeam</option><option>Rocket</option><option>airFiber</option><option>UniFi</option><option>EdgeRouter</option><option>Other</option></select></label>
+<label>Location / site<input id="location" placeholder="Nairobi - CBD"></label>
+<label>Management IP<input id="ip" placeholder="192.168.1.20"></label>
+<label>MAC address<input id="mac" placeholder="AA:BB:CC:DD:EE:FF"></label>
+<label>Username<input id="username" placeholder="ubnt"></label>
+<label class="wide">Password<input id="password" type="password" autocomplete="off"></label>
+<label class="wide">Notes<textarea id="notes" rows="2"></textarea></label>
+<div class="wide actions"><button id="saveBtn">Save radio</button><button type="button" class="secondary hidden" id="cancelEdit">Cancel</button></div>
+</form><p id="formMsg" class="message"></p>
+</section>
+<section id="adminPanel" class="panel hidden">
+ <div class="section-title"><h2>Admin dashboard · Staff & password access</h2><span class="hint">Only admins can manage these settings</span></div>
+ <form id="addStaffForm" class="grid">
+  <label>Staff email (they must sign up first)<input id="staffEmail" type="email" required placeholder="technician@example.com"></label>
+  <label>Role<select id="staffRole"><option value="technician">Technician · add/edit radios</option><option value="viewer">Viewer · read-only</option><option value="admin">Admin · full control</option></select></label>
+  <div class="wide"><button>Add / update staff</button></div>
+ </form><p id="staffMsg" class="message"></p>
+ <div id="staffList" class="staff-list"></div>
+ <div class="divider-line"></div>
+ <h3>Choose which passwords a staff member can view</h3>
+ <label>Staff member<select id="permissionMember"></select></label>
+ <div id="permissionList" class="permission-list"><p class="hint">Select a staff member to manage password access.</p></div>
+</section>
+<section class="panel">
+<div class="section-title"><h2>Radio inventory</h2><button class="secondary" id="refresh">Refresh</button></div>
+<div class="filters"><input id="search" placeholder="Search name, IP, MAC, site..."><select id="filter"><option value="">All models</option><option>NanoStation</option><option>LiteBeam</option><option>PowerBeam</option><option>Rocket</option><option>airFiber</option><option>UniFi</option><option>EdgeRouter</option><option>Other</option></select></div>
+<div id="records" class="records"></div><p id="empty" class="hint">No radios found, or your account has not been added to a team.</p>
+</section>
+<p class="hint security">Security: use HTTPS hosting, invite only trusted staff, enable MFA for administrators, and remove team membership when staff leave. Passwords are stored in the protected Supabase database; they are not end-to-end encrypted. Supabase project administrators can access database contents.</p>
+</section>
+<div id="toast" role="status"></div>
+</main><footer>UBNT Team Manager · Shared cloud workspace</footer>
+</div><script src="app.js"></script>
+</body></html>
